@@ -1,2 +1,2 @@
 # proj1
-matrículas em disciplinas
+primeiro trabalho em grupo lab prog: matrículas em disciplinas
