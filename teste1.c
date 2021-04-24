@@ -4,15 +4,15 @@
 
 typedef struct nam{
 	
-	char nome[50];
+	char *nome;
 	struct nam *prox;
 	
 }name;
 
 typedef struct dis{
 	int codigo;
-	char nome[50] ;
-	char professor[50];
+	char *nome ;
+	char *professor;
 	int creditos;
 	struct dis *prox;
 	name pessoas;
@@ -22,7 +22,7 @@ typedef struct dis{
 typedef struct al{
 	int codigo;
 	int cpf;
-	char nome[50];
+	char *nome;
 	struct al *prox;
 	disciplina materia;
 	
@@ -38,7 +38,7 @@ disciplina *materia=NULL;
 aluno *estudante=NULL;
 period *periodo=NULL;
 
-aluno *buscal(char chave[50], aluno *point, aluno **point2)
+aluno *buscal(char *chave, aluno *point, aluno **point2)
 {
 	aluno *aux;
 	aux=point;
@@ -52,44 +52,50 @@ aluno *buscal(char chave[50], aluno *point, aluno **point2)
 
 void insereal(aluno **point)
 {
-	aluno *aux;
+	aluno *ajuda;
 	aluno *aux2;
-	aux=(aluno*)malloc(sizeof(aluno));
-	char name[50];
+	ajuda=(aluno*)malloc(sizeof(aluno));
+	char resp[50];
 	int cpf;
 	int codigo;
 	printf("Escreva o nome do aluno:");
-	scanf("%s", name);
-	if(buscal(name, *point, &aux2 )!=NULL)
-	{
-		printf("Esse aluno ja esta registrado\n");
-	}
-	else
-	{
-		aux->nome[50]=name[50];
+	fflush(stdin);
+	scanf("%[^\n]s", resp);
+	fflush(stdin);
+	//if(buscal(resp, *point, &aux2 )!= NULL)
+	//{
+		
+	//	printf("Esse aluno ja esta registrado\n");
+	//}
+	//else
+	//{
+		ajuda->nome=resp;
+		
 		printf("Escreva o codigo do aluno:");
 		scanf("%d", &codigo);
-		aux->codigo=codigo;
+		ajuda->codigo=codigo;
 		printf("Escreva o cpf do aluno:");
 		scanf("%d", &cpf);
-		aux->cpf=cpf;
-		aux->prox=*point;
-		*point=aux;
-	}
+		ajuda->cpf=cpf;
+		ajuda->prox=*point;
+		*point=ajuda;
+	//}
 }
 void printal(aluno *point)
 {
 	aluno *aux;
+	aux=point;
 	while(aux!=NULL)
 	{
 		printf("%s\n", aux->nome);
 		aux=aux->prox;
-		
 	}
 }
 
 int main(){
 	
+	insereal(&estudante);
+	printal(estudante);
 	insereal(&estudante);
 	insereal(&estudante);
 	printal(estudante);
