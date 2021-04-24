@@ -115,17 +115,45 @@ void printal(aluno *point)
 		aux=aux->prox;
 	}
 }
+ void insere_discplina(aluno *pont){
+    char alun[50];
+    aluno *ponteiro;
+    aluno *aux;
+    printf("Nome do aluno para adicionar matérias:\n");
+    scanf("%s", alun);
+    aux = buscal(alun, pont, &ponteiro);
+    if(aux == NULL){
+        printf("Aluno não encontrado.\n");
+    }
+    else{
+        printf("Entre com a disciplina:\n");
+        scanf("%s", aux->materia.nome);
+        strcpy(aux->materia.pessoas.nome, aux->nome);
+    }
+ }
+
+ void print_dis(aluno *pont){
+    aluno *aux;
+    aux = pont;
+    //while(aux!=NULL){
+        //printf("%s", aux->materia.nome);
+        //aux = aux->prox;
+    //}
+ }
+
 
 int main(){
 	
 	insereal(&estudante);
+    insere_discplina(estudante);
+    print_dis(estudante);
 	//printal(estudante);
-	insereal(&estudante);
-	insereal(&estudante);
-	printal(estudante);
-	removeal(&estudante);
-	insereal(&estudante);
-	printal(estudante);
+	//insereal(&estudante);
+	//insereal(&estudante);
+	//printal(estudante);
+	//removeal(&estudante);
+	//insereal(&estudante);
+	//printal(estudante);
 	
 	return 0;
 }
