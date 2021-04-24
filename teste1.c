@@ -4,14 +4,14 @@
 
 typedef struct nam{
 	
-	char *nome;
+	char nome[50];
 	struct nam *prox;
 	
 }name;
 
 typedef struct dis{
 	int codigo;
-	char *nome ;
+	char nome[50] ;
 	char *professor;
 	int creditos;
 	struct dis *prox;
@@ -22,7 +22,7 @@ typedef struct dis{
 typedef struct al{
 	int codigo;
 	int cpf;
-	char *nome;
+	char nome[50];
 	struct al *prox;
 	disciplina materia;
 	
@@ -42,7 +42,7 @@ aluno *buscal(char *chave, aluno *point, aluno **point2)
 {
 	aluno *aux;
 	aux=point;
-	while( aux!=NULL && strcmp(aux->nome,chave)!=0)
+	while(aux!=NULL && strcmp(aux->nome,chave)!=0)
 	{
 		*point2=aux;
 		aux=aux->prox;
@@ -58,19 +58,17 @@ void insereal(aluno **point)
 	char resp[50];
 	int cpf;
 	int codigo;
+	fflush(stdin);
 	printf("Escreva o nome do aluno:");
+	scanf("%[^\n]s", ajuda->nome);
 	fflush(stdin);
-	scanf("%[^\n]s", resp);
-	fflush(stdin);
-	//if(buscal(resp, *point, &aux2 )!= NULL)
-	//{
+	if(buscal(ajuda->nome, *point, &aux2 )!= NULL)
+	{
 		
-	//	printf("Esse aluno ja esta registrado\n");
-	//}
-	//else
-	//{
-		ajuda->nome=resp;
-		
+		printf("Esse aluno ja esta registrado\n");
+	}
+	else
+	{
 		printf("Escreva o codigo do aluno:");
 		scanf("%d", &codigo);
 		ajuda->codigo=codigo;
@@ -79,7 +77,33 @@ void insereal(aluno **point)
 		ajuda->cpf=cpf;
 		ajuda->prox=*point;
 		*point=ajuda;
-	//}
+	}
+}
+
+void removeal(aluno **point)
+{
+	aluno *aux;
+	aluno *pai;
+	char resp[50];
+	fflush(stdin);
+	printf("Escreva o nome do aluno que se deseja remover:");
+	scanf("%[^\n]s", resp);
+	aux = buscal(resp, *point, &pai);
+	if(aux==NULL)
+	{
+		printf("Esse aluno nao esta registrado\n");
+	}
+	else
+	{
+		if(aux==*point)
+		{
+			*point=aux->prox; //ponteiro aponta pro proximo
+		}
+		else
+		{
+			pai->prox=aux->prox;
+		}
+	}
 }
 void printal(aluno *point)
 {
@@ -87,7 +111,7 @@ void printal(aluno *point)
 	aux=point;
 	while(aux!=NULL)
 	{
-		printf("%s\n", aux->nome);
+		printf("%s\n",  aux->nome);
 		aux=aux->prox;
 	}
 }
@@ -95,11 +119,13 @@ void printal(aluno *point)
 int main(){
 	
 	insereal(&estudante);
-	printal(estudante);
+	//printal(estudante);
 	insereal(&estudante);
 	insereal(&estudante);
 	printal(estudante);
-	
+	removeal(&estudante);
+	insereal(&estudante);
+	printal(estudante);
 	
 	return 0;
 }
