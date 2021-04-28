@@ -2,20 +2,29 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct nam{
+typedef struct nameal{
 	
 	char nome[50];
-	struct nam *prox;
+	float periodo;
+	struct nameal *prox;
 	
-}name;
+}nomeal;
+
+typedef struct namedis{
+	
+	char nome[50];
+	float periodo;
+	struct namedis *prox;
+	
+}nomedis;
 
 typedef struct dis{
 	int codigo;
 	char nome[50] ;
-	char *professor;
+	char professor[50];
 	int creditos;
 	struct dis *prox;
-	name pessoas;
+	nomeal *pessoa;
 	
 }disciplina;
 
@@ -24,13 +33,13 @@ typedef struct al{
 	int cpf;
 	char nome[50];
 	struct al *prox;
-	disciplina materia;
+	nomedis *materia;
 	
 }aluno;
 
 typedef struct per{
 	float periodo;
-	aluno estudante;
+	aluno *estudante;
 	struct per *prox;
 }period;
 
@@ -41,6 +50,18 @@ period *periodo=NULL;
 aluno *buscal(char *chave, aluno *point, aluno **point2)
 {
 	aluno *aux;
+	aux=point;
+	while(aux!=NULL && strcmp(aux->nome,chave)!=0)
+	{
+		*point2=aux;
+		aux=aux->prox;
+	}
+	return aux;
+}
+
+disciplina *buscadis(char *chave, disciplina *point, disciplina **point2)
+{
+	disciplina *aux;
 	aux=point;
 	while(aux!=NULL && strcmp(aux->nome,chave)!=0)
 	{
@@ -75,6 +96,40 @@ void insereal(aluno **point)
 		printf("Escreva o cpf do aluno:");
 		scanf("%d", &cpf);
 		ajuda->cpf=cpf;
+		ajuda->materia=NULL;//faço o ponteiro de disciplinas apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
+		ajuda->prox=*point;
+		*point=ajuda;
+	}
+}
+
+void inseredis(disciplina **point)
+{
+	disciplina *ajuda;
+	disciplina *aux2;
+	ajuda=(disciplina*)malloc(sizeof(disciplina));
+	char resp[50];
+	int creditos;
+	int codigo;
+	fflush(stdin);
+	printf("Escreva o nome da disciplina:");
+	scanf("%[^\n]s", ajuda->nome);
+	fflush(stdin);
+	if(buscadis(ajuda->nome, *point, &aux2 )!= NULL)
+	{
+		
+		printf("Essa disciplina ja esta registrada\n");
+	}
+	else
+	{
+		printf("Escreva o nome do professor:");
+		scanf("%[^\n]s", ajuda->professor);
+		printf("Escreva o codigo da disciplina:");
+		scanf("%d", &codigo);
+		ajuda->codigo=codigo;
+		printf("Escreva a quantidade de creditos da disciplina:");
+		scanf("%d", &creditos);
+		ajuda->creditos=creditos;
+		ajuda->pessoa=NULL;//faço o ponteiro de alunos apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
 		ajuda->prox=*point;
 		*point=ajuda;
 	}
@@ -105,6 +160,33 @@ void removeal(aluno **point)
 		}
 	}
 }
+
+void removedis(disciplina **point)
+{
+	disciplina *aux;
+	disciplina *pai;
+	char resp[50];
+	fflush(stdin);
+	printf("Escreva o nome da disciplina que se deseja remover:");
+	scanf("%[^\n]s", resp);
+	aux = buscadis(resp, *point, &pai);
+	if(aux==NULL)
+	{
+		printf("Essa disciplina nao esta registrado\n");
+	}
+	else
+	{
+		if(aux==*point)
+		{
+			*point=aux->prox; //ponteiro aponta pro proximo
+		}
+		else
+		{
+			pai->prox=aux->prox;
+		}
+	}
+}
+
 void printal(aluno *point)
 {
 	aluno *aux;
@@ -115,45 +197,172 @@ void printal(aluno *point)
 		aux=aux->prox;
 	}
 }
- void insere_discplina(aluno *pont){
+void disciplina_aluno(aluno *pont, disciplina *pont2)
+{
     char alun[50];
+    char materia[50];
+    float per;
     aluno *ponteiro;
     aluno *aux;
-    printf("Nome do aluno para adicionar matÃ©rias:\n");
+    nomedis *novadis;
+    nomeal *novoal;
+    disciplina *ponteiro2;
+    disciplina *aux2;
+    int cont;
+    printf("Nome do aluno para adicionar materias:");
     scanf("%s", alun);
     aux = buscal(alun, pont, &ponteiro);
     if(aux == NULL){
-        printf("Aluno nÃ£o encontrado.\n");
+        printf("Aluno nao encontrado.\n");
     }
-    else{
-        printf("Entre com a disciplina:\n");
-        scanf("%s", aux->materia.nome);
-        strcpy(aux->materia.pessoas.nome, aux->nome);
+    else
+	{
+		fflush(stdin);
+        printf("Entre com a disciplina: ");
+        scanf("%[^\n]s", materia);
+        aux2 = buscadis(materia,pont2,&ponteiro2);
+        if(aux2==NULL)
+        {
+        	printf("Materia nao encontrada, por favor registre a materia\n");
+		}
+        else
+        {
+        	printf("Periodo: ");
+    		scanf("%f", &per);
+        	novadis = (nomedis*)malloc(sizeof(nomedis));
+        	strcpy(novadis->nome, materia);
+        	novadis->periodo=per;
+        	novadis->prox=aux->materia;
+        	aux->materia=novadis;
+        	novoal = (nomeal*)malloc(sizeof(nomeal));
+        	strcpy(novoal->nome, aux->nome);
+        	novoal->periodo=per;
+        	novoal->prox=aux2->pessoa;
+        	aux2->pessoa=novoal;
+		}
     }
- }
+}
 
- void print_dis(aluno *pont){
+void print_dis_al(aluno *pont){
     aluno *aux;
-    aux = pont;
-    //while(aux!=NULL){
-        //printf("%s", aux->materia.nome);
-        //aux = aux->prox;
-    //}
- }
+    aluno *ponteiro;
+    nomedis *ajuda;
+    char aluno[50];
+    float per;
+    fflush(stdin);
+    printf("Digite o nome do aluno que se quer ver as disciplinas: ");
+    scanf("%[^\n]s", aluno);
+    aux = buscal(aluno,pont, &ponteiro);
+     if(aux==NULL)
+    {
+        printf("Aluno nao encontrada, por favor registre o aluno\n");
+	}
+    else
+    {
+    	printf("Periodo: ");
+    	scanf("%f", &per);
+    	printf("As disciplinas sao:\n");
+    	ajuda=aux->materia;
+    	while(ajuda!=NULL)
+		{
+			if(ajuda->periodo==per)
+			{
+				printf("%s\n", ajuda->nome);
+			}
+			ajuda = ajuda->prox;
+    	    
+    	}
+    }
+}
+
+void print_al_dis(disciplina *pont){
+    disciplina *aux;
+    disciplina *ponteiro;
+    nomeal *ajuda;
+    char materia[50];
+    float per;
+    fflush(stdin);
+    printf("Digite o nome da disciplina que se quer ver os alunos: ");
+    scanf("%[^\n]s", materia);
+    aux = buscadis(materia,pont, &ponteiro);
+    if(aux==NULL)
+    {
+        printf("Materia nao encontrada, por favor registre a materia\n");
+	}
+    else
+    {
+    	printf("Periodo: ");
+    	scanf("%f", &per);
+    	printf("Os alunos sao:\n");
+    	ajuda=aux->pessoa;
+    	while(ajuda!=NULL)
+		{
+			if(ajuda->periodo==per)
+			{
+				printf("%s\n", ajuda->nome);
+			}
+			ajuda = ajuda->prox;  
+    	}
+   	}
+}
 
 
 int main(){
 	
-	insereal(&estudante);
-    insere_discplina(estudante);
-    print_dis(estudante);
-	//printal(estudante);
+	int cont;
+	printf("Aqui voce encontra um sistema de matriculas\n");
+	printf("Insira 0 se voce deseja sair\n");
+	printf("Insira 1 se voce deseja adicionar um aluno\n");
+	printf("Insira 2 se voce deseja remover um aluno\n");
+	printf("Insira 3 se voce deseja adicionar uma disciplina\n");
+	printf("Insira 4 se voce deseja remover uma disciplina\n");
+	printf("Insira 5 se voce deseja inserir uma disciplina a um aluno\n");
+	printf("Insira 6 se voce deseja ver todos os alunos de uma disciplina\n");
+	printf("Insira 7 se voce deseja ver todos as disciplinas de um aluno\n");
+	do
+	{
+		printf("\nInsira qual opcao do menu deseja executar: ");
+		scanf("%d", &cont);
+		if(cont==1)
+		{
+			insereal(&estudante);
+		}
+		if(cont==2)
+		{
+			removeal(&estudante);
+		}
+		if(cont==3)
+		{
+			inseredis(&materia);
+		}
+		if(cont==4)
+		{
+			removedis(&materia);
+		}
+		if(cont==5)
+		{
+			disciplina_aluno(estudante,materia);
+		}
+		if(cont==6)
+		{
+			print_al_dis(materia);
+		}
+		if(cont==7)
+		{
+			print_dis_al(estudante);
+		}
+	}
+	while(cont!=0);
 	//insereal(&estudante);
 	//insereal(&estudante);
-	//printal(estudante);
-	//removeal(&estudante);
-	//insereal(&estudante);
-	//printal(estudante);
+    //inseredis(&materia);
+    //inseredis(&materia);
+    //disciplina_aluno(estudante,materia);
+    //disciplina_aluno(estudante,materia);
+    //print_dis_al(estudante);
+    //removedis(&materia);
+    //printf("\n");
+    //print_al_dis(materia);
 	
 	return 0;
 }
