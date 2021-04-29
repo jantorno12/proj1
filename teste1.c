@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+FILE *p;
+
+
 typedef struct nameal{
 	
 	char nome[50];
@@ -306,9 +309,59 @@ void print_al_dis(disciplina *pont){
    	}
 }
 
+void escreve_dis(disciplina *pont)
+{
+	disciplina *aux;
+	aux=pont;
+	while(aux!=NULL)
+	{
+		fprintf(p, "%s", aux->nome);
+		fprintf(p, "%s", "/");
+		fprintf(p, "%d", aux->codigo);
+		fprintf(p, "%s", "/");
+		fprintf(p, "%s", aux->professor);
+		fprintf(p, "%s", "/");
+		fprintf(p, "%d", aux->creditos);
+		fprintf(p, "%s", "\n");
+		aux=aux->prox;
+	}
+	fprintf(p, "%s", "\n");
+}
+
+void escreve_al(aluno *pont)
+{
+	aluno *aux;
+	nomedis *aux2;
+	aux=pont;
+	while(aux!=NULL)
+	{
+		fprintf(p, "%s", aux->nome);
+		fprintf(p, "%s", "/");
+		fprintf(p, "%d", aux->codigo);
+		fprintf(p, "%s", "/");
+		fprintf(p, "%d", aux->cpf);
+		fprintf(p, "%s", "\n");
+		aux2=aux->materia;
+		while(aux2!=NULL)
+		{
+			fprintf(p, "%s", aux2->nome);
+			fprintf(p, "%s", "/");
+			fprintf(p, "%.1f", aux2->periodo);
+			fprintf(p, "%s", "\n");
+			aux2=aux2->prox;
+		}
+		aux=aux->prox;
+		fprintf(p, "%s", "\n");
+	}
+	fprintf(p, "%s", "\n");
+}
+
 
 int main(){
 	
+	p=fopen("cadastro.txt", "r");
+	fclose(p);
+	p=fopen("cadastro.txt", "w");
 	int cont;
 	printf("Aqui voce encontra um sistema de matriculas\n");
 	printf("Insira 0 se voce deseja sair\n");
@@ -353,16 +406,9 @@ int main(){
 		}
 	}
 	while(cont!=0);
-	//insereal(&estudante);
-	//insereal(&estudante);
-    //inseredis(&materia);
-    //inseredis(&materia);
-    //disciplina_aluno(estudante,materia);
-    //disciplina_aluno(estudante,materia);
-    //print_dis_al(estudante);
-    //removedis(&materia);
-    //printf("\n");
-    //print_al_dis(materia);
+	escreve_dis(materia);
+	escreve_al(estudante);
+
 	
 	return 0;
 }
