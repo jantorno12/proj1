@@ -66,6 +66,8 @@ disciplina *buscadis(char *chave, disciplina *point, disciplina **point2)
 {
 	disciplina *aux;
 	aux=point;
+	int i;
+	i=0;
 	while(aux!=NULL && strcmp(aux->nome,chave)!=0)
 	{
 		*point2=aux;
@@ -323,6 +325,7 @@ void escreve_dis(disciplina *pont)
 		fprintf(p, "%s", "/");
 		fprintf(p, "%d", aux->creditos);
 		fprintf(p, "%s", "\n");
+		aux->pessoa=NULL;
 		aux=aux->prox;
 	}
 	fprintf(p, "%s", "*\n");
@@ -333,6 +336,7 @@ void escreve_al(aluno *pont)
 	aluno *aux;
 	nomedis *aux2;
 	aux=pont;
+	
 	while(aux!=NULL)
 	{
 		fprintf(p, "%s", aux->nome);
@@ -344,14 +348,17 @@ void escreve_al(aluno *pont)
 		aux2=aux->materia;
 		while(aux2!=NULL)
 		{
+			printf("%s\n", aux2->nome);
 			fprintf(p, "%s", aux2->nome);
 			fprintf(p, "%s", "/");
 			fprintf(p, "%.1f", aux2->periodo);
 			fprintf(p, "%s", "\n");
 			aux2=aux2->prox;
+			
 		}
 		aux=aux->prox;
 		fprintf(p, "%s", "^\n");
+
 	}
 	fprintf(p, "%s", "*\n");
 }
@@ -414,6 +421,7 @@ void le_disciplina(disciplina **materia)
 				aux->creditos=creditos;
 				strcpy(aux->professor, prof);
 				strcpy(aux->nome, dis);
+				aux->pessoa=NULL;
 				aux->prox = *materia;
 				*materia= aux;
 			}
@@ -425,33 +433,35 @@ void le_disciplina(disciplina **materia)
 	while(ch!=EOF&&pausa==0);
 }
 
-void le_aluno(aluno **al, disciplina **disc)
+void le_aluno(aluno **al, disciplina *disc)
 {
 	aluno *aln;
-	aluno *suporte;
-	suporte = *al;
+	aluno *suport;
 	disciplina *dics;
 	disciplina *point2;
 	nomedis *ndis;
 	nomeal *nal;
-
+	
 	char ch;
 	char vetor[50];
-	char disciplina[50];
+	char discipli[50];
 	float periodo;
 	int cpf;
 	int numero;
-
 	int i = 0;
 	int j = 1;
     int k = 0;
+    int e=0;
+    int o=0;
 	int pausa=0;
-
 	ch=fgetc(p);
-
 	do
     {
     	ch=fgetc(p);
+    	if(o!=0)
+    	{
+    		ch=fgetc(p);
+		}
     	while(ch!='^')
     	{
 			if(ch=='*')
@@ -462,7 +472,7 @@ void le_aluno(aluno **al, disciplina **disc)
     		if(ch!='/' && j==1 && k==0)
     		{   
     			vetor[i]=ch;
-                //printf("%c", vetori]);
+                printf("%c", vetor[i]);
     			i=i+1;
 			}
 			if(ch == '/' && j==1 && k==0)
@@ -472,7 +482,7 @@ void le_aluno(aluno **al, disciplina **disc)
 				strcpy(aln -> nome, vetor);
 				fscanf(p, "%d", &numero);
 				aln -> codigo = numero;
-                //printf("\n%d", numero);
+                printf("\n%d", numero);
     			j=j+1;
     			ch=fgetc(p);
     			//ch=fgetc(p);
@@ -487,41 +497,54 @@ void le_aluno(aluno **al, disciplina **disc)
                 ch = fgetc(p);
                 i = 0;
                 k++;
-				ndis = (nomedis*)malloc(sizeof(nomedis));
 				nal = (nomeal*)malloc(sizeof(nomeal));
-
+				ch=fgetc(p);
 			}
             if(ch != '/' && k!=0){
             	
-				disciplina[i] = ch;
-                printf("%c", disciplina[i]);
+				discipli[i] = ch;
+                printf("%c", discipli[i]);
                 i++;
+                
 		    }
             if(ch == '/' && k!=0){
-                disciplina[i] = '\0';
-				
+            	suport=*al;
+            	
+				ndis = (nomedis*)malloc(sizeof(nomedis));
+                discipli[i]='\0';
+				dics=buscadis(discipli, disc, &point2);
 
-				dics = buscadis(disciplina, *disc, &point2);
-
-				strcpy(ndis->nome , disciplina);
+				strcpy(ndis->nome , discipli);
 				strcpy(nal->nome , aln -> nome);
 
                 fscanf(p, "%f", &periodo);
                 printf("\n%.1f", periodo);
                 i = 0;
 				ndis -> periodo = periodo;
-				printf("\n%d\n", ndis->periodo);
-				ndis -> prox = suporte -> materia;
-				suporte -> materia = ndis;
+				if(e!=0)
+				{
+					ndis -> prox = suport->materia;
+				}
+				
+            	if(e==0)
+            	{
+            		ndis->prox=NULL;
+				}
+				printf("oi");
+				e=e+1;
+				suport->materia = ndis;
 				nal -> periodo = periodo;
 				nal -> prox = dics -> pessoa;
 				dics -> pessoa = nal;
+				ch=fgetc(p);
             }
 			ch=fgetc(p);
 		}
 		j=1;
         k=0;
 		i=0;
+		e=0;
+		o=o+1;
         printf("\n");
 	}
 	while((ch!=EOF) && (pausa==0));
@@ -533,7 +556,7 @@ int main(){
 	
 	p=fopen("cadastro.txt", "r");
 	le_disciplina(&materia);
-	le_aluno(&estudante, &materia);
+	le_aluno(&estudante, materia);
 	fclose(p);
 	printf("\n selva \n");
 	p=fopen("cadastro.txt", "w");
@@ -583,7 +606,6 @@ int main(){
 	while(cont!=0);
 	escreve_dis(materia);
 	escreve_al(estudante);
-
-	
+	fclose(p);
 	return 0;
 }
