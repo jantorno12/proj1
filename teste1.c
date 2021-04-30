@@ -436,7 +436,7 @@ void le_aluno(aluno **al, disciplina **disc)
 	nomeal *nal;
 
 	char ch;
-	char aluno[50];
+	char vetor[50];
 	char disciplina[50];
 	float periodo;
 	int cpf;
@@ -461,17 +461,16 @@ void le_aluno(aluno **al, disciplina **disc)
 			}
     		if(ch!='/' && j==1 && k==0)
     		{   
-    			aluno[i]=ch;
-                //printf("%c", aluno[i]);
+    			vetor[i]=ch;
+                //printf("%c", vetori]);
     			i=i+1;
-				printf("oi");
 			}
 			if(ch == '/' && j==1 && k==0)
     		{
-    			aluno[i]='\0';
-				aln = malloc(sizeof(aluno));
-				strcpy(aln -> nome, aluno);
-    			fscanf(p, "%d", &numero);
+    			vetor[i]='\0';
+				aln=malloc(sizeof(aluno));
+				strcpy(aln -> nome, vetor);
+				fscanf(p, "%d", &numero);
 				aln -> codigo = numero;
                 //printf("\n%d", numero);
     			j=j+1;
@@ -484,20 +483,23 @@ void le_aluno(aluno **al, disciplina **disc)
 				aln -> cpf = cpf;
 				aln -> prox = *al;
 				*al = aln;
-                //printf("\n%d", cpf);
+                printf("\n%d", cpf);
                 ch = fgetc(p);
                 i = 0;
                 k++;
 				ndis = (nomedis*)malloc(sizeof(nomedis));
 				nal = (nomeal*)malloc(sizeof(nomeal));
+
 			}
             if(ch != '/' && k!=0){
-                disciplina[i] = ch;
-                //printf("%c", disciplina[i]);
+            	
+				disciplina[i] = ch;
+                printf("%c", disciplina[i]);
                 i++;
-            }
+		    }
             if(ch == '/' && k!=0){
                 disciplina[i] = '\0';
+				
 
 				dics = buscadis(disciplina, *disc, &point2);
 
@@ -505,13 +507,12 @@ void le_aluno(aluno **al, disciplina **disc)
 				strcpy(nal->nome , aln -> nome);
 
                 fscanf(p, "%f", &periodo);
-                //printf("\n%.1f", periodo);
+                printf("\n%.1f", periodo);
                 i = 0;
-
 				ndis -> periodo = periodo;
+				printf("\n%d\n", ndis->periodo);
 				ndis -> prox = suporte -> materia;
 				suporte -> materia = ndis;
-
 				nal -> periodo = periodo;
 				nal -> prox = dics -> pessoa;
 				dics -> pessoa = nal;
@@ -534,6 +535,7 @@ int main(){
 	le_disciplina(&materia);
 	le_aluno(&estudante, &materia);
 	fclose(p);
+	printf("\n selva \n");
 	p=fopen("cadastro.txt", "w");
 	int cont;
 	printf("Aqui voce encontra um sistema de matriculas\n");
