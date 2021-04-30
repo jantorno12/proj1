@@ -99,7 +99,7 @@ void insereal(aluno **point)
 		printf("Escreva o cpf do aluno:");
 		scanf("%d", &cpf);
 		ajuda->cpf=cpf;
-		ajuda->materia=NULL;//faço o ponteiro de disciplinas apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
+		ajuda->materia=NULL;//faï¿½o o ponteiro de disciplinas apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
 		ajuda->prox=*point;
 		*point=ajuda;
 	}
@@ -132,7 +132,7 @@ void inseredis(disciplina **point)
 		printf("Escreva a quantidade de creditos da disciplina:");
 		scanf("%d", &creditos);
 		ajuda->creditos=creditos;
-		ajuda->pessoa=NULL;//faço o ponteiro de alunos apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
+		ajuda->pessoa=NULL;//faï¿½o o ponteiro de alunos apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
 		ajuda->prox=*point;
 		*point=ajuda;
 	}
@@ -425,11 +425,114 @@ void le_disciplina(disciplina **materia)
 	while(ch!=EOF&&pausa==0);
 }
 
+void le_aluno(aluno **al, disciplina **disc)
+{
+	aluno *aln;
+	aluno *suporte;
+	suporte = *al;
+	disciplina *dics;
+	disciplina *point2;
+	nomedis *ndis;
+	nomeal *nal;
+
+	char ch;
+	char aluno[50];
+	char disciplina[50];
+	float periodo;
+	int cpf;
+	int numero;
+
+	int i = 0;
+	int j = 1;
+    int k = 0;
+	int pausa=0;
+
+	ch=fgetc(p);
+
+	do
+    {
+    	ch=fgetc(p);
+    	while(ch!='^')
+    	{
+			if(ch=='*')
+    		{
+    			pausa=1;
+				break;
+			}
+    		if(ch!='/' && j==1 && k==0)
+    		{   
+    			aluno[i]=ch;
+                //printf("%c", aluno[i]);
+    			i=i+1;
+				printf("oi");
+			}
+			if(ch == '/' && j==1 && k==0)
+    		{
+    			aluno[i]='\0';
+				aln = malloc(sizeof(aluno));
+				strcpy(aln -> nome, aluno);
+    			fscanf(p, "%d", &numero);
+				aln -> codigo = numero;
+                //printf("\n%d", numero);
+    			j=j+1;
+    			ch=fgetc(p);
+    			//ch=fgetc(p);
+			}
+			if(ch =='/' && j==2 && k==0)
+    		{
+    			fscanf(p, "%d", &cpf);
+				aln -> cpf = cpf;
+				aln -> prox = *al;
+				*al = aln;
+                //printf("\n%d", cpf);
+                ch = fgetc(p);
+                i = 0;
+                k++;
+				ndis = (nomedis*)malloc(sizeof(nomedis));
+				nal = (nomeal*)malloc(sizeof(nomeal));
+			}
+            if(ch != '/' && k!=0){
+                disciplina[i] = ch;
+                //printf("%c", disciplina[i]);
+                i++;
+            }
+            if(ch == '/' && k!=0){
+                disciplina[i] = '\0';
+
+				dics = buscadis(disciplina, *disc, &point2);
+
+				strcpy(ndis->nome , disciplina);
+				strcpy(nal->nome , aln -> nome);
+
+                fscanf(p, "%f", &periodo);
+                //printf("\n%.1f", periodo);
+                i = 0;
+
+				ndis -> periodo = periodo;
+				ndis -> prox = suporte -> materia;
+				suporte -> materia = ndis;
+
+				nal -> periodo = periodo;
+				nal -> prox = dics -> pessoa;
+				dics -> pessoa = nal;
+            }
+			ch=fgetc(p);
+		}
+		j=1;
+        k=0;
+		i=0;
+        printf("\n");
+	}
+	while((ch!=EOF) && (pausa==0));
+
+fclose(p);
+}
 
 int main(){
 	
 	p=fopen("cadastro.txt", "r");
 	le_disciplina(&materia);
+	le_aluno(&estudante, &materia);
 	fclose(p);
 	p=fopen("cadastro.txt", "w");
 	int cont;
