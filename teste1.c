@@ -325,7 +325,7 @@ void escreve_dis(disciplina *pont)
 		fprintf(p, "%s", "\n");
 		aux=aux->prox;
 	}
-	fprintf(p, "%s", "\n");
+	fprintf(p, "%s", "*\n");
 }
 
 void escreve_al(aluno *pont)
@@ -351,15 +351,85 @@ void escreve_al(aluno *pont)
 			aux2=aux2->prox;
 		}
 		aux=aux->prox;
-		fprintf(p, "%s", "\n");
+		fprintf(p, "%s", "^\n");
 	}
-	fprintf(p, "%s", "\n");
+	fprintf(p, "%s", "*\n");
+}
+
+
+void le_disciplina(disciplina **materia)
+{
+	char ch;
+	char dis[50];
+	char prof[50];
+	int creditos;
+	int codigo;
+	int i;
+	int k=0;
+	int j=1;
+	int pausa=0;
+	disciplina *aux;
+	i=0;
+	do
+    {
+    	ch=fgetc(p);
+    	while(ch!='\n')
+    	{
+    		
+			if(ch=='*')
+    		{
+    			pausa=1;
+				break;
+			}
+    		if(ch!='/' && j==1)
+    		{
+    			dis[i]=ch;
+    			i=i+1;
+			}
+			if(ch=='/' && j==1)
+    		{
+    			dis[i]='\0';
+    			fscanf(p, "%d", &codigo);
+    			j=j+1;
+    			i=0;
+    			ch=fgetc(p);
+    			ch=fgetc(p);
+			}
+			if(ch!='/' && j==2)
+    		{
+    			prof[i]=ch;
+    			i=i+1;
+    			//printf("poi");
+			}
+			if(ch=='/' && j==2)
+    		{
+    			prof[i]='\0';
+    			fscanf(p, "%d", &creditos);
+    			j=j+1;
+			}
+			if(j==3)
+			{
+				aux=(disciplina*)malloc(sizeof(disciplina));
+				aux->codigo=codigo;
+				aux->creditos=creditos;
+				strcpy(aux->professor, prof);
+				strcpy(aux->nome, dis);
+				aux->prox = *materia;
+				*materia= aux;
+			}
+			ch=fgetc(p);
+		}
+		j=1;
+		i=0;
+	}
+	while(ch!=EOF&&pausa==0);
 }
 
 
 int main(){
 	
 	p=fopen("cadastro.txt", "r");
+	le_disciplina(&materia);
 	fclose(p);
 	p=fopen("cadastro.txt", "w");
 	int cont;
