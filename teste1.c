@@ -101,7 +101,7 @@ void insereal(aluno **point)
 		printf("Escreva o cpf do aluno:");
 		scanf("%d", &cpf);
 		ajuda->cpf=cpf;
-		ajuda->materia=NULL;//fa�o o ponteiro de disciplinas apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
+		ajuda->materia=NULL;//faco o ponteiro de disciplinas apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
 		ajuda->prox=*point;
 		*point=ajuda;
 	}
@@ -134,7 +134,7 @@ void inseredis(disciplina **point)
 		printf("Escreva a quantidade de creditos da disciplina:");
 		scanf("%d", &creditos);
 		ajuda->creditos=creditos;
-		ajuda->pessoa=NULL;//fa�o o ponteiro de alunos apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
+		ajuda->pessoa=NULL;//faco o ponteiro de alunos apontar pra NULL, pra quando inserir uma disciplina pra esse aluno, o ponteiro de proximo ficar apontando pro null, e encadear a lista
 		ajuda->prox=*point;
 		*point=ajuda;
 	}
@@ -348,7 +348,6 @@ void escreve_al(aluno *pont)
 		aux2=aux->materia;
 		while(aux2!=NULL)
 		{
-			printf("%s\n", aux2->nome);
 			fprintf(p, "%s", aux2->nome);
 			fprintf(p, "%s", "/");
 			fprintf(p, "%.1f", aux2->periodo);
@@ -406,7 +405,6 @@ void le_disciplina(disciplina **materia)
     		{
     			prof[i]=ch;
     			i=i+1;
-    			//printf("poi");
 			}
 			if(ch=='/' && j==2)
     		{
@@ -472,7 +470,6 @@ void le_aluno(aluno **al, disciplina *disc)
     		if(ch!='/' && j==1 && k==0)
     		{   
     			vetor[i]=ch;
-                printf("%c", vetor[i]);
     			i=i+1;
 			}
 			if(ch == '/' && j==1 && k==0)
@@ -482,10 +479,8 @@ void le_aluno(aluno **al, disciplina *disc)
 				strcpy(aln -> nome, vetor);
 				fscanf(p, "%d", &numero);
 				aln -> codigo = numero;
-                printf("\n%d", numero);
     			j=j+1;
     			ch=fgetc(p);
-    			//ch=fgetc(p);
 			}
 			if(ch =='/' && j==2 && k==0)
     		{
@@ -493,7 +488,6 @@ void le_aluno(aluno **al, disciplina *disc)
 				aln -> cpf = cpf;
 				aln -> prox = *al;
 				*al = aln;
-                printf("\n%d", cpf);
                 ch = fgetc(p);
                 i = 0;
                 k++;
@@ -503,7 +497,6 @@ void le_aluno(aluno **al, disciplina *disc)
             if(ch != '/' && k!=0){
             	
 				discipli[i] = ch;
-                printf("%c", discipli[i]);
                 i++;
                 
 		    }
@@ -518,7 +511,6 @@ void le_aluno(aluno **al, disciplina *disc)
 				strcpy(nal->nome , aln -> nome);
 
                 fscanf(p, "%f", &periodo);
-                printf("\n%.1f", periodo);
                 i = 0;
 				ndis -> periodo = periodo;
 				if(e!=0)
@@ -530,7 +522,6 @@ void le_aluno(aluno **al, disciplina *disc)
             	{
             		ndis->prox=NULL;
 				}
-				printf("oi");
 				e=e+1;
 				suport->materia = ndis;
 				nal -> periodo = periodo;
@@ -558,7 +549,6 @@ int main(){
 	le_disciplina(&materia);
 	le_aluno(&estudante, materia);
 	fclose(p);
-	printf("\n selva \n");
 	p=fopen("cadastro.txt", "w");
 	int cont;
 	printf("Aqui voce encontra um sistema de matriculas\n");
